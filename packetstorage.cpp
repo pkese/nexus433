@@ -37,7 +37,7 @@ void PacketStorage::Add(uint64_t raw)
     // check packet. 0 is not valid.
     if (!packet.IsValid())
     {
-        DEBUG_PRINTF("DEBUG: Received invalid packet. %d\n", 0);
+        DEBUG_PRINTF("DEBUG: Received invalid packet. %llx\n", raw);
         return;
     }
 

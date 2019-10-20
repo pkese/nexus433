@@ -56,49 +56,57 @@ public:
 
   uint8_t GetId() const
   {
-    return (m_Raw >> 28) & 0xFF;
+    return (m_Raw >> 32) & 0xFF;
   }
 
   uint8_t GetChannel() const
   {
-    return (m_Raw >> 24) & 0x03;
+    return (m_Raw >> 28) & 0x03;
   }
 
   // Returns temperature * 10
   int16_t GetTemperature10() const
   {
-    int16_t t = m_Raw >> 12 & 0x0FFF;
-    return 0x0800 & t ? 0xF000 | t  : t;
+    int16_t t = (m_Raw >> 16) & 0x0FFF;
+    t = (t >> 8) | (t & 0xF0) | ((t & 0x0F) << 8);
+    //return 0x0800 & t ? 0xF000 | t  : t;
+    //printf("temp=%x\n",t);
+    return t;
   }
 
   // Returns temperature as double
   double GetTemperature() const
   {
-    return GetTemperature10() / 10.0;
+    //return GetTemperature10() / 10.0;
+    double t = GetTemperature10();
+    return t / 18.0 - 67.75;
   }
 
   uint8_t GetHumidity() const
   {
-    return m_Raw & 0xFF;
+    int h = (m_Raw >> 8) & 0xFF;
+    return (h & 0x0F) * 16 | (h >> 4);
   }
 
   uint8_t GetConst() const
   {
-    return (m_Raw >> 8) & 0x0F;
+    //return (m_Raw >> 8) & 0x0F;
+    return (m_Raw >> 40) & 0x0F;
   }
 
   uint8_t GetBattery() const
   {
-    return (m_Raw >> 27) & 0x01;
+    return (m_Raw >> 31) & 0x01;
   }
 
   bool IsValid() const
   {
+    //printf("T: %f, RH: %d\n", GetTemperature(), GetHumidity());
     return
-      GetConst() == 0x0F &&
+      GetConst() == 0x00 &&
       GetHumidity() <= 100 &&
-      GetTemperature10() > -400 &&
-      GetTemperature10() < 600; //arbitrary chosen valid range
+      GetTemperature() > -40.0 &&
+      GetTemperature() < 60.0; //arbitrary chosen valid range
   }
 
   uint64_t GetRaw() const
@@ -133,7 +141,7 @@ public:
 
   uint8_t GetQualityPercent() const
   {
-      return ((m_FrameCounter * 100) / 12);
+      return ((m_FrameCounter * 100) / 8);
   }
 
   void Substitute(uint16_t newId)

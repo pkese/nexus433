@@ -26,12 +26,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 // microseconds
 #define PULSE_HIGH_LEN 500
-#define PULSE_LOW_ZERO 1000
-#define PULSE_LOW_ONE 2000
-#define SYNC_GAP_LEN 4000
+//#define PULSE_LOW_ZERO 1000
+//#define PULSE_LOW_ONE 2000
+//#define SYNC_GAP_LEN 4000
+
+#define PULSE_LOW_ZERO 2000
+#define PULSE_LOW_ONE 4000
+#define SYNC_GAP_LEN 8000
+
 
 // Packet consist of 36 bits
-#define PACKET_BITS_COUNT 36
+//#define PACKET_BITS_COUNT 36
+#define PACKET_BITS_COUNT 42
 
 void Decoder::Start()
 {
